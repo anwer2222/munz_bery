@@ -1,0 +1,184 @@
+/* MUNZ — Berry Swirl Parfait page.
+   Layout: RTL; hero = copy on the start (right) side + 3D stage; layers list below; single dark brand theme. */
+:root {
+  --purple: #30133c;       /* Deep Purple — primary, 60% */
+  --purple-2: #6b3f7a;     /* end of the approved "purple depth" gradient */
+  --orange: #eba367;       /* Warm Orange — accents only, never as text on white or gray */
+  --gray: #dedee0;         /* Light Grayish — secondary text */
+  --white: #ffffff;
+  --line: rgba(222, 222, 224, 0.16);
+  --card: rgba(255, 255, 255, 0.06);
+  --display: var(--font-display), 'Arial Rounded MT Bold', system-ui, sans-serif;
+  --body: var(--font-body), system-ui, -apple-system, 'Segoe UI', Tahoma, sans-serif;
+  color-scheme: dark;
+}
+
+* { box-sizing: border-box; }
+html { -webkit-text-size-adjust: 100%; }
+body {
+  margin: 0;
+  background: linear-gradient(135deg, var(--purple) 0%, #3d1a4c 55%, var(--purple-2) 130%) fixed, var(--purple);
+  color: var(--white);
+  font-family: var(--body);
+  font-size: 16px;
+  line-height: 1.7;
+}
+img { max-width: 100%; }
+button { font: inherit; }
+:focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
+
+main { min-height: 100svh; }
+.top, .hero, .layers, .foot {
+  padding-left: max(20px, env(safe-area-inset-left, 0px));
+  padding-right: max(20px, env(safe-area-inset-right, 0px));
+}
+
+/* ---------- header */
+.top { padding-block: calc(env(safe-area-inset-top, 0px) + 18px) 0; display: flex; justify-content: flex-start; }
+.top-logo { width: 154px; height: auto; display: block; }
+
+/* ---------- hero */
+.hero {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.8fr) 1.4fr;
+  align-items: center;
+  gap: 24px;
+  max-width: 1280px;
+  margin-inline: auto;
+  padding-block: 8px 24px;
+}
+.hero-copy { display: grid; gap: 14px; align-content: center; min-width: 0; }
+.eyebrow {
+  margin: 0; color: var(--orange); font-weight: 500; font-size: 15px; letter-spacing: 0;
+  display: inline-flex; align-items: center; gap: 10px;
+}
+.eyebrow::before { content: ''; width: 28px; height: 2px; background: var(--orange); border-radius: 2px; }
+h1 {
+  margin: 0; font-family: var(--display); font-weight: 800;
+  font-size: clamp(40px, 5.4vw, 72px); line-height: 1.1; text-wrap: balance;
+}
+.lede { margin: 0; color: var(--gray); font-weight: 300; font-size: 17px; max-width: 34em; }
+.facts { display: flex; flex-wrap: wrap; gap: 10px; margin: 6px 0 0; }
+.facts div {
+  border: 1px solid var(--line); border-radius: 14px; padding: 10px 16px; min-width: 104px;
+  background: var(--card);
+}
+.facts dt { font-size: 13px; color: var(--gray); }
+.facts dd { margin: 0; font-family: var(--display); font-weight: 800; font-size: 28px; line-height: 1.2; }
+.facts small { font-family: var(--body); font-size: 13px; font-weight: 400; color: var(--gray); }
+
+/* ---------- 3D viewer */
+.viewer {
+  --labels: 0;
+  --controls-h: 76px;
+  position: relative;
+  height: min(86svh, 820px);
+  min-height: 520px;
+  min-width: 0;
+}
+.viewer-canvas { position: absolute; inset: 0 0 var(--controls-h) 0; outline: none; touch-action: none; cursor: grab; }
+.viewer-canvas:active { cursor: grabbing; }
+.viewer-canvas:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; border-radius: 24px; }
+.viewer-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
+
+.viewer-loading, .viewer-error {
+  position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 12px;
+  color: var(--gray); font-size: 14px; margin: 0; pointer-events: none;
+}
+.viewer-loading img { width: 64px; animation: bob 1.6s ease-in-out infinite; }
+@keyframes bob { 50% { transform: translateY(-8px); } }
+
+.viewer-leaders { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; opacity: var(--labels); overflow: visible; }
+.viewer-leaders line { stroke: var(--orange); stroke-width: 1.4; stroke-dasharray: 3 4; }
+.viewer-leaders circle { fill: var(--orange); stroke: var(--purple); stroke-width: 2; }
+.viewer-leaders g.on line { stroke-dasharray: none; stroke-width: 2; }
+
+.viewer-labels { list-style: none; margin: 0; padding: 0; position: absolute; inset: 0; pointer-events: none; }
+.viewer-labels li {
+  position: absolute; top: 0; left: 0; width: 270px;
+  opacity: var(--labels);
+  transition: width 0.25s ease;
+  will-change: transform;
+}
+.is-open .viewer-labels li { pointer-events: auto; }
+.viewer-labels button {
+  all: unset; box-sizing: border-box; cursor: pointer; display: grid; gap: 2px; width: 100%;
+  text-align: right; padding: 8px 12px; border-radius: 12px; border: 1px solid transparent;
+  transition: background 0.2s, border-color 0.2s;
+}
+.viewer-labels button:hover { background: var(--card); }
+.viewer-labels button:focus-visible { outline: 2px solid var(--orange); outline-offset: 0; }
+.viewer-labels li.on button { background: rgba(48, 19, 60, 0.85); border-color: var(--orange); }
+.viewer-labels strong { font-family: var(--display); font-weight: 800; font-size: 19px; line-height: 1.25; }
+.viewer-labels span { font-size: 13px; line-height: 1.55; color: var(--gray); font-weight: 300; }
+
+.viewer-controls {
+  position: absolute; inset-inline: 0; bottom: 8px;
+  display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 10px 18px;
+}
+.btn-primary {
+  appearance: none; border: 0; cursor: pointer;
+  background: var(--orange); color: var(--purple);
+  font-family: var(--display); font-weight: 800; font-size: 18px;
+  padding: 12px 28px; border-radius: 999px;
+  box-shadow: 0 10px 30px rgba(235, 163, 103, 0.25);
+  transition: transform 0.15s, box-shadow 0.2s, background 0.2s;
+}
+.btn-primary:hover { background: #f1b37f; box-shadow: 0 12px 34px rgba(235, 163, 103, 0.35); }
+.btn-primary:active { transform: scale(0.97); }
+.btn-primary:disabled { opacity: 0.5; cursor: progress; }
+.btn-primary[aria-pressed='true'] { background: var(--white); }
+.viewer-hint { display: inline-flex; align-items: center; gap: 6px; color: var(--gray); font-size: 14px; }
+.viewer-hint svg { width: 20px; height: 20px; }
+
+/* ---------- wave divider */
+.wave { display: block; width: min(1280px, 100%); height: 46px; margin: 8px auto 0; padding-inline: 20px; }
+
+/* ---------- layers list (always-readable text version of the 3D labels) */
+.layers { max-width: 1280px; margin-inline: auto; padding-block: 28px 48px; }
+.layers h2 { font-family: var(--display); font-weight: 800; font-size: clamp(28px, 3.4vw, 40px); margin: 0 0 18px; }
+.layers ol {
+  list-style: none; margin: 0; padding: 0; counter-reset: layer;
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px;
+}
+.layers li {
+  counter-increment: layer; position: relative;
+  border: 1px solid var(--line); border-radius: 18px; padding: 16px 18px 16px 18px; background: var(--card);
+}
+.layers li::before {
+  content: counter(layer, arabic-indic); position: absolute; top: 14px; left: 16px;
+  font-family: var(--display); font-weight: 800; font-size: 22px; color: var(--orange); line-height: 1;
+}
+.layers h3 { margin: 0 0 4px; font-family: var(--display); font-weight: 800; font-size: 20px; }
+.layers p { margin: 0; color: var(--gray); font-size: 14.5px; font-weight: 300; }
+
+/* ---------- footer */
+.foot {
+  display: flex; align-items: center; justify-content: center; gap: 12px;
+  padding-block: 20px calc(env(safe-area-inset-bottom, 0px) + 28px);
+  color: var(--gray); font-size: 14px; border-top: 1px solid var(--line);
+}
+.foot p { margin: 0; }
+
+/* ---------- phones and narrow screens */
+@media (max-width: 900px) {
+  .hero { grid-template-columns: 1fr; gap: 8px; }
+  .hero-copy { text-align: right; }
+  .viewer { height: 82svh; min-height: 480px; }
+  .viewer-labels li { width: 150px; }
+  .viewer-labels strong { font-size: 15px; }
+  .viewer-labels span { display: none; }
+  .viewer-labels li.on { width: 190px; }
+  .viewer-labels li.on span { display: block; }
+  .viewer-labels button { padding: 6px 8px; }
+}
+@media (max-width: 420px) {
+  .top-logo { width: 128px; }
+  .viewer-labels li { width: 120px; }
+  .viewer-labels li.on { width: 170px; }
+  .btn-primary { font-size: 16px; padding: 11px 22px; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
