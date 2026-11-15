@@ -13,10 +13,19 @@ export const CUP_SETS = [
   {
     key: 'icecream', name: 'أكواب الآيس كريم',
     cups: [
-      { node: 'Paper_Cup_S', size: 'ورقي', spec: '٧٢ × ٥٥ ملم' },
+      { node: 'Paper_Cup_S', size: 'اطفال', spec: '٧٢ × ٥٥ ملم' },
       { node: 'Clear_Cup_S', size: 'صغير', spec: '٧٥ × ٨٠ ملم' },
       { node: 'Clear_Cup_M', size: 'وسط', spec: '٨٥ × ١٠٥ ملم' },
       { node: 'Clear_Cup_L', size: 'كبير', spec: '٩٥ × ١٣٠ ملم' },
+    ],
+  },
+  
+  {
+    key: 'plastic', name: 'أكواب بلاستيكية',
+    cups: [
+      { node: 'Plastic_Cup_S', size: 'صغير', spec: '٧٥ × ٨٠ ملم' },
+      { node: 'Plastic_Cup_M', size: 'وسط', spec: '٨٥ × ١٠٥ ملم' },
+      { node: 'Plastic_Cup_L', size: 'كبير', spec: '٩٥ × ١٣٠ ملم' },
     ],
   },
   {
@@ -24,14 +33,6 @@ export const CUP_SETS = [
     cups: [
       { node: 'Paper_Cup_M', size: 'وسط', spec: '٨٠ × ٩٠ ملم' },
       { node: 'Paper_Cup_L', size: 'كبير', spec: '٩٠ × ١١٥ ملم' },
-    ],
-  },
-  {
-    key: 'plastic', name: 'أكواب بلاستيكية',
-    cups: [
-      { node: 'Plastic_Cup_S', size: 'صغير', spec: '٧٥ × ٨٠ ملم' },
-      { node: 'Plastic_Cup_M', size: 'وسط', spec: '٨٥ × ١٠٥ ملم' },
-      { node: 'Plastic_Cup_L', size: 'كبير', spec: '٩٥ × ١٣٠ ملم' },
     ],
   },
 ];
