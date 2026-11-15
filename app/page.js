@@ -22,7 +22,7 @@ export default function Page() {
 
       <img src="/brand/wave_divider.svg" alt="" className="wave" aria-hidden="true" />
 
-      <section className="hero" aria-labelledby="title">
+      {/* <section className="hero" aria-labelledby="title">
         <div className="hero-copy">
           <p className="eyebrow">المفضل لمنز</p>
           <h1 id="title">بيري سويرل بارفيه</h1>
@@ -51,7 +51,7 @@ export default function Page() {
             </li>
           ))}
         </ol>
-      </section>
+      </section> */}
 
       <footer className="foot">
         <img src="/brand/badge_round.svg" alt="" width="56" height="56" />
