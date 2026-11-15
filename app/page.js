@@ -1,12 +1,26 @@
 import ParfaitViewer from '@/components/ParfaitViewer';
+import CupShowcase from '@/components/CupShowcase';
 import { LAYERS } from '@/components/layers';
 
 export default function Page() {
   return (
     <main>
-      <header className="top">
+      <header className="top flex justify-center justify-items">
         <img src="/brand/logo_lockup_white.svg" alt="منز — مونز نيويورك آيس" className="top-logo" width="154" height="85" />
       </header>
+
+      <section className="cups" aria-labelledby="cups-title">
+        <div className="cups-copy">
+          <p className="eyebrow">هوية منز</p>
+          <h2 id="cups-title">أكواب منز</h2>
+          <p className="lede">
+            مجموعتان بثلاثة أحجام: أكواب ورقية بلون منز البنفسجي، وأكواب شفافة يلتف حولها شعار منز.
+          </p>
+        </div>
+        <CupShowcase />
+      </section>
+
+      <img src="/brand/wave_divider.svg" alt="" className="wave" aria-hidden="true" />
 
       <section className="hero" aria-labelledby="title">
         <div className="hero-copy">

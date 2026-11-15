@@ -28,7 +28,7 @@ button { font: inherit; }
 :focus-visible { outline: 2px solid var(--orange); outline-offset: 3px; }
 
 main { min-height: 100svh; }
-.top, .hero, .layers, .foot {
+.top, .cups, .hero, .layers, .foot {
   padding-left: max(20px, env(safe-area-inset-left, 0px));
   padding-right: max(20px, env(safe-area-inset-right, 0px));
 }
@@ -131,6 +131,40 @@ h1 {
 .viewer-hint { display: inline-flex; align-items: center; gap: 6px; color: var(--gray); font-size: 14px; }
 .viewer-hint svg { width: 20px; height: 20px; }
 
+/* ---------- cup showcase (first section; the parfait follows) */
+.cups { max-width: 1280px; margin-inline: auto; padding-block: 8px 12px; display: grid; gap: 4px; }
+.cups-copy { display: grid; gap: 10px; max-width: 40em; }
+.cups-copy h2 {
+  margin: 0; font-family: var(--display); font-weight: 800;
+  font-size: clamp(36px, 4.6vw, 60px); line-height: 1.1;
+}
+.cups-stage {
+  position: relative; height: min(64svh, 560px); min-height: 380px; min-width: 0;
+  background: radial-gradient(60% 55% at 50% 58%, rgba(222, 222, 224, 0.16), rgba(222, 222, 224, 0) 70%);
+}
+.cups-canvas { position: absolute; inset: 56px 0 56px 0; outline: none; touch-action: pan-y; cursor: grab; }
+.cups-canvas:active { cursor: grabbing; }
+.cups-canvas:focus-visible { outline: 2px solid var(--orange); outline-offset: -2px; border-radius: 24px; }
+.cups-canvas canvas { display: block; width: 100% !important; height: 100% !important; }
+.cups-tabs {
+  position: absolute; top: 4px; inset-inline: 0; margin-inline: auto; width: max-content; z-index: 1;
+  display: flex; gap: 4px; padding: 4px; border-radius: 999px; border: 1px solid var(--line); background: var(--card);
+}
+.cups-tabs button {
+  appearance: none; border: 0; cursor: pointer; background: transparent; color: var(--gray);
+  font-family: var(--display); font-weight: 800; font-size: 16px; padding: 8px 20px; border-radius: 999px;
+  transition: background 0.2s, color 0.2s;
+}
+.cups-tabs button[aria-selected='true'] { background: var(--orange); color: var(--purple); }
+.cups-labels { list-style: none; margin: 0; padding: 0; position: absolute; inset: 56px 0 0 0; pointer-events: none; overflow: hidden; }
+.cups-labels li {
+  position: absolute; top: 0; left: 0; display: grid; justify-items: center; gap: 0; white-space: nowrap;
+  opacity: 0; transition: opacity 0.35s ease;
+}
+.cups-labels li.on { opacity: 1; }
+.cups-labels strong { font-family: var(--display); font-weight: 800; font-size: 18px; line-height: 1.3; }
+.cups-labels span { font-size: 13px; color: var(--gray); font-weight: 300; }
+
 /* ---------- wave divider */
 .wave { display: block; width: min(1280px, 100%); height: 46px; margin: 8px auto 0; padding-inline: 20px; }
 
@@ -165,6 +199,7 @@ h1 {
   .hero { grid-template-columns: 1fr; gap: 8px; }
   .hero-copy { text-align: right; }
   .viewer { height: 82svh; min-height: 480px; }
+  .cups-stage { height: 62svh; min-height: 360px; }
   .viewer-labels li { width: 150px; }
   .viewer-labels strong { font-size: 15px; }
   .viewer-labels span { display: none; }
