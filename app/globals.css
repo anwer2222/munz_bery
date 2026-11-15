@@ -209,6 +209,7 @@ h1 {
 }
 @media (max-width: 420px) {
   .top-logo { width: 128px; }
+  .cups-tabs button { font-size: 14px; padding: 7px 12px; }
   .viewer-labels li { width: 120px; }
   .viewer-labels li.on { width: 170px; }
   .btn-primary { font-size: 16px; padding: 11px 22px; }

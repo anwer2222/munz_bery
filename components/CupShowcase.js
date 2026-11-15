@@ -8,28 +8,36 @@ import { RoomEnvironment } from 'three/examples/jsm/environments/RoomEnvironment
 
 const lerp = (a, b, t) => a + (b - a) * t;
 
-// `node` is the empty's name in /public/models/cups.glb. Small sits on the right (RTL reading order).
+// `node` is the empty's name in /public/models/cups.glb. Cups are listed smallest first; the smallest sits on the right (RTL reading order).
 export const CUP_SETS = [
   {
-    key: 'paper', name: 'أكواب ورقية',
+    key: 'icecream', name: 'أكواب الآيس كريم',
     cups: [
-      { node: 'Paper_Cup_S', size: 'صغير', spec: '٧٢ × ٥٥ ملم' },
-      { node: 'Paper_Cup_M', size: 'وسط', spec: '٨٠ × ٩٠ ملم' },
-      { node: 'Paper_Cup_L', size: 'كبير', spec: '٩٠ × ١١٥ ملم' },
-    ],
-  },
-  {
-    key: 'clear', name: 'أكواب شفافة',
-    cups: [
+      { node: 'Paper_Cup_S', size: 'ورقي', spec: '٧٢ × ٥٥ ملم' },
       { node: 'Clear_Cup_S', size: 'صغير', spec: '٧٥ × ٨٠ ملم' },
       { node: 'Clear_Cup_M', size: 'وسط', spec: '٨٥ × ١٠٥ ملم' },
       { node: 'Clear_Cup_L', size: 'كبير', spec: '٩٥ × ١٣٠ ملم' },
     ],
   },
+  {
+    key: 'coffee', name: 'أكواب القهوة',
+    cups: [
+      { node: 'Paper_Cup_M', size: 'وسط', spec: '٨٠ × ٩٠ ملم' },
+      { node: 'Paper_Cup_L', size: 'كبير', spec: '٩٠ × ١١٥ ملم' },
+    ],
+  },
+  {
+    key: 'plastic', name: 'أكواب بلاستيكية',
+    cups: [
+      { node: 'Plastic_Cup_S', size: 'صغير', spec: '٧٥ × ٨٠ ملم' },
+      { node: 'Plastic_Cup_M', size: 'وسط', spec: '٨٥ × ١٠٥ ملم' },
+      { node: 'Plastic_Cup_L', size: 'كبير', spec: '٩٥ × ١٣٠ ملم' },
+    ],
+  },
 ];
-const SLOTS = [0.125, 0, -0.13];   // x of small, medium, large inside a set (metres)
-const SET_GAP = 0.6;               // distance between the two sets; the camera slides between them
-const FRAME_W = 0.42, FRAME_H = 0.17;
+const CUP_GAP = 0.03;    // space between cups inside a set (metres)
+const SET_GAP = 0.9;     // distance between set centres; the camera slides between them
+const FRAME_H = 0.17;    // height kept in view; the width fits the widest set, so every set shares one scale
 
 export default function CupShowcase() {
   const stageRef = useRef(null);
@@ -76,7 +84,9 @@ export default function CupShowcase() {
     const shadowGeo = new THREE.PlaneGeometry(0.15, 0.15);
     const shadowMat = new THREE.MeshBasicMaterial({ map: shadowTex, transparent: true, depthWrite: false });
 
-    const cups = [];   // { node, setIndex, slot }
+    const cups = [];          // { node, key }
+    const setX = [];          // centre of each set
+    let frameW = 0.42;        // grows to the widest set once the model is in
     let disposed = false;
     const draco = new DRACOLoader().setDecoderPath('/draco/');
     const loader = new GLTFLoader().setDRACOLoader(draco);
@@ -92,24 +102,34 @@ export default function CupShowcase() {
             clearcoat: 1, clearcoatRoughness: 0.03, side: THREE.DoubleSide, depthWrite: false, envMapIntensity: 1.8,
           });
           o.renderOrder = 2;
-        } else if (name.startsWith('Clear_Print')) {
+        } else if (/_Print_/.test(name)) {   // logo shells on the clear and plastic cups
           const m = o.material;
           m.transparent = true; m.alphaTest = 0.02; m.depthWrite = false; m.side = THREE.DoubleSide;
           o.renderOrder = 3;
         }
       });
       scene.add(model);
-      CUP_SETS.forEach((S, si) => S.cups.forEach((c, ci) => {
-        const node = model.getObjectByName(c.node);
-        if (!node) return;
-        node.position.set(si * SET_GAP + SLOTS[ci], 0, 0);
-        node.rotation.set(0, 0, 0);
-        const sh = new THREE.Mesh(shadowGeo, shadowMat);
-        sh.rotation.x = -Math.PI / 2; sh.position.set(node.position.x, 0.0004, 0);
-        scene.add(sh);
-        const height = new THREE.Box3().setFromObject(node).getSize(new THREE.Vector3()).y;
-        cups.push({ node, key: c.node, height });
-      }));
+      // lay each set out right-to-left by cup width, centred on its own spot
+      CUP_SETS.forEach((S, si) => {
+        const nodes = S.cups.map((c) => model.getObjectByName(c.node));
+        const widths = nodes.map((n) => (n ? new THREE.Box3().setFromObject(n).getSize(new THREE.Vector3()).x : 0));
+        const total = widths.reduce((a, w) => a + w, 0) + CUP_GAP * (nodes.length - 1);
+        let x = si * SET_GAP + total / 2;
+        nodes.forEach((node, ci) => {
+          x -= widths[ci] / 2;
+          if (node) {
+            node.position.set(x, 0, 0);
+            node.rotation.set(0, 0, 0);
+            const sh = new THREE.Mesh(shadowGeo, shadowMat);
+            sh.rotation.x = -Math.PI / 2; sh.position.set(x, 0.0004, 0);
+            scene.add(sh);
+            cups.push({ node, key: S.cups[ci].node });
+          }
+          x -= widths[ci] / 2 + CUP_GAP;
+        });
+        setX[si] = si * SET_GAP;
+        frameW = Math.max(frameW, total + 0.08);
+      });
       setReady(true);
     }, undefined, () => setError('تعذّر تحميل الأكواب. حدّث الصفحة وحاول مرة أخرى.'));
 
@@ -157,11 +177,11 @@ export default function CupShowcase() {
       sway = lerp(sway, idle ? 1 : 0, 1 - Math.exp(-dt * 1.2));
       for (const c of cups) c.node.rotation.y = yaw + sway * Math.sin(now * 0.0007) * 0.7;
 
-      const goalX = setRef.current * SET_GAP;
+      const goalX = setX[setRef.current] ?? setRef.current * SET_GAP;
       camX = reduce ? goalX : lerp(camX, goalX, 1 - Math.exp(-dt * 5));
 
       const fov = THREE.MathUtils.degToRad(camera.fov);
-      const dist = Math.max((FRAME_H / 2) / Math.tan(fov / 2), (FRAME_W / 2) / (Math.tan(fov / 2) * camera.aspect)) * 1.12;
+      const dist = Math.max((FRAME_H / 2) / Math.tan(fov / 2), (frameW / 2) / (Math.tan(fov / 2) * camera.aspect)) * 1.12;
       const cy = 0.062, pitch = 0.2;
       camera.position.set(camX, cy + Math.sin(pitch) * dist, Math.cos(pitch) * dist);
       camera.lookAt(camX, cy, 0);
