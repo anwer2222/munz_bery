@@ -1,5 +1,7 @@
 import ParfaitViewer from '@/components/ParfaitViewer';
 import CupShowcase from '@/components/CupShowcase';
+import IdentityShowcase from '@/components/IdentityShowcase';
+import ApparelShowcase from '@/components/ApparelShowcase';
 import { LAYERS } from '@/components/layers';
 
 export default function Page() {
@@ -18,6 +20,32 @@ export default function Page() {
           </p>
         </div>
         <CupShowcase />
+      </section>
+
+      <img src="/brand/wave_divider.svg" alt="" className="wave" aria-hidden="true" />
+
+      <section className="cups" aria-labelledby="identity-title">
+        <div className="cups-copy">
+          <p className="eyebrow">بطاقات وشارات الفريق</p>
+          <h2 id="identity-title">هوية فريق منز</h2>
+          <p className="lede">
+            أربع بطاقات تعريف للموظفين، وأربع بطاقات عمل، وأربع شارات أسماء بتصاميم وخامات مختلفة. اسحب لتدويرها ومشاهدة التفاصيل.
+          </p>
+        </div>
+        <IdentityShowcase />
+      </section>
+
+      <img src="/brand/wave_divider.svg" alt="" className="wave" aria-hidden="true" />
+
+      <section className="cups" aria-labelledby="apparel-title">
+        <div className="cups-copy">
+          <p className="eyebrow">ملابس وإكسسوارات الفريق</p>
+          <h2 id="apparel-title">أزياء منز</h2>
+          <p className="lede">
+            أربعة أزياء موحدة، وأربع مرايل بتصاميم وخامات متنوعة، وأربع قبعات تحمل شعار منز بالخط العربي. اسحب للتدوير.
+          </p>
+        </div>
+        <ApparelShowcase />
       </section>
 
       <img src="/brand/wave_divider.svg" alt="" className="wave" aria-hidden="true" />
