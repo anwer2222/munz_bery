@@ -120,6 +120,7 @@ export default function ApparelShowcase() {
         const boxes = nodes.map((n) => (n ? new THREE.Box3().setFromObject(n) : null));
         const widths = boxes.map((b) => (b ? b.getSize(new THREE.Vector3()).x : 0));
         const heights = boxes.map((b) => (b ? b.getSize(new THREE.Vector3()).y : 0));
+        const depths = boxes.map((b) => (b ? b.getSize(new THREE.Vector3()).z : 0));
         const maxH = Math.max(0.12, ...heights);
         const total = widths.reduce((a, w) => a + w, 0) + S.gap * (nodes.length - 1);
         let x = si * SET_GAP + total / 2;
@@ -135,16 +136,18 @@ export default function ApparelShowcase() {
             sh.rotation.x = -Math.PI / 2;
             sh.position.set(x, 0.001, 0);
             scene.add(sh);
-            items.push({ node, key: S.items[ci].node, labelY: -maxH * 0.08 });
+            const labelY = S.key === 'hats' ? -0.022 : -maxH * 0.08;
+            const labelZ = S.key === 'hats' ? depths[ci] * 0.62 : depths[ci] * 0.3;
+            items.push({ node, key: S.items[ci].node, labelY, labelZ });
           }
           x -= widths[ci] / 2 + S.gap;
         });
 
         frames[si] = {
           x: si * SET_GAP,
-          cy: maxH * 0.48,
+          cy: S.key === 'hats' ? maxH * 0.36 : maxH * 0.48,
           frameW: total + S.gap * 2.2,
-          frameH: maxH * 1.18,
+          frameH: S.key === 'hats' ? maxH * 1.45 : maxH * 1.18,
           pitch: S.pitch,
         };
       });
@@ -209,7 +212,7 @@ export default function ApparelShowcase() {
 
       for (const it of items) {
         const el = labelRefs.current[it.key]; if (!el) continue;
-        tmp.set(it.node.position.x, it.labelY, 0).project(camera);
+        tmp.set(it.node.position.x, it.labelY, it.labelZ ?? 0).project(camera);
         el.style.transform = `translate(${((tmp.x + 1) / 2 * W).toFixed(1)}px, ${((1 - tmp.y) / 2 * H).toFixed(1)}px) translate(-50%, 0)`;
       }
     };
